@@ -1,5 +1,7 @@
 # Binary-to-text encoding
 
+* [wiki/Binary-to-text_encoding](https://en.wikipedia.org/wiki/Binary-to-text_encoding)
+
 ## Radix
 
 * https://en.wikipedia.org/wiki/Base64
