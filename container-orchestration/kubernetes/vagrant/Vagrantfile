@@ -1,0 +1,61 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.box_check_update = false
+
+  # config.ssh.username = "vagrant"
+  # config.ssh.password = "vagrant"
+  # config.ssh.private_key_path = "/Users/liuyanjie/.ssh/vagrant_id_rsa"
+  # config.ssh.keys_only = true
+  # config.ssh.forward_agent = true
+
+  config.vm.define "k8s-master" do |node|
+    config.vm.provider "virtualbox" do |vm|
+      vm.name = "k8s-master"
+      vm.gui = false
+      vm.cpus = 2
+      vm.memory = 4096
+      vm.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+      vm.linked_clone = true if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+    end
+
+    # node.ssh.host = "192.168.3.101"
+    # node.ssh.port = 22
+    # node.ssh.guest_port = 22
+
+    # config.vm.provision "shell", inline: "echo "ubuntu:ubuntu" | sudo chpasswd"
+
+    # node.vm.provision "shell", run: "once", path: "kubeadm-master-ubuntu.sh"
+    node.vm.hostname = "k8s-master"
+    node.vm.provision "shell", inline: "echo hello from k8s-master"
+    node.vm.network "private_network", ip: "10.0.0.11"
+    node.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)", ip: "192.168.3.101"
+  end
+
+  (1..3).each do |i|
+    config.vm.define "k8s-node-#{i}" do |node|
+      config.vm.provider "virtualbox" do |vm|
+        vm.name = "k8s-node-#{i}"
+        vm.gui = false
+        vm.cpus = 2
+        vm.memory = 4096
+        vm.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+        vm.linked_clone = true if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+      end
+
+      # node.ssh.host = "192.168.3.101"
+      # node.ssh.port = 22
+      # node.ssh.guest_port = 22
+
+      # config.vm.provision "shell", inline: "echo "ubuntu:ubuntu" | sudo chpasswd"
+
+      # node.vm.provision "shell", run: "once", path: "kubeadm-master-ubuntu.sh"
+      node.vm.provision "shell", inline: "echo hello from k8s-node-#{i}"
+      node.vm.hostname = "k8s-node-10-0-1-#{i}"
+      node.vm.network "private_network", ip: "10.0.1.#{i}"
+      node.vm.network "public_network", bridge: "en0: Wi-Fi (AirPort)", ip: "192.168.3.11#{i}"
+    end
+  end
+end

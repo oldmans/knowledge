@@ -1,0 +1,20 @@
+# 复制 openssl 配置文件
+cp /etc/pki/tls/openssl.cnf .
+# 编辑 openssl 配置使其支持 IP 认证
+vim openssl.cnf
+# 主要修改内容如下
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+IP.1 = ${K8S_SERVICE_IP}  # kubernetes server ip
+IP.2 = ${MASTER_HOST}     # master ip(如果都在一台机器上写一个就行)

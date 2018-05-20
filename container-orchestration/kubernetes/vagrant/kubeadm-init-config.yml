@@ -1,0 +1,62 @@
+apiVersion: kubeadm.k8s.io/v1alpha1
+kind: MasterConfiguration
+api:
+  # advertiseAddress: 10.0.0.11
+  # advertiseAddress: 192.168.3.101
+  bindPort: 6443
+etcd:
+  image: registry.cn-hangzhou.aliyuncs.com/kubernetes-containers/etcd-amd64:latest
+#   endpoints:
+#   - <endpoint1|string>
+#   - <endpoint2|string>
+#   caFile: <path|string>
+#   certFile: <path|string>
+#   keyFile: <path|string>
+#   dataDir: <path|string>
+#   extraArgs:
+#     <argument>: <value|string>
+#     <argument>: <value|string>
+networking:
+#   dnsDomain: <string>
+#   serviceSubnet: <cidr>
+  podSubnet: "10.244.0.0/16"
+kubernetesVersion: 1.9.0
+# cloudProvider: <string>
+# nodeName: k8s-master
+# authorizationModes:
+# - <authorizationMode1|string>
+# - <authorizationMode2|string>
+token: b9e6bb.6746bcc9f8ef8267
+# tokenTTL: 0
+# selfHosted: <bool>
+# apiServerExtraArgs:
+#   <argument>: <value|string>
+#   <argument>: <value|string>
+# controllerManagerExtraArgs:
+#   <argument>: <value|string>
+#   <argument>: <value|string>
+# schedulerExtraArgs:
+#   <argument>: <value|string>
+#   <argument>: <value|string>
+# apiServerExtraVolumes:
+# - name: <value|string>
+#   hostPath: <value|string>
+#   mountPath: <value|string>
+# controllerManagerExtraVolumes:
+# - name: <value|string>
+#   hostPath: <value|string>
+#   mountPath: <value|string>
+# schedulerExtraVolumes:
+# - name: <value|string>
+#   hostPath: <value|string>
+#   mountPath: <value|string>
+# apiServerCertSANs:
+# - <name1|string>
+# - <name2|string>
+# certificatesDir: <string>
+imageRepository: registry.cn-hangzhou.aliyuncs.com/kubernetes-containers
+# unifiedControlPlaneImage: <string>
+featureGates:
+  SelfHosting: true
+  StoreCertsInSecrets: true
+  # CoreDNS: true
