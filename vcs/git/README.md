@@ -57,4 +57,8 @@
 * [常用Git命令清单](http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html)
 * [Git使用规范流程](http://www.ruanyifeng.com/blog/2015/08/git-use-process.html)
 * [Git分支管理策略](http://www.ruanyifeng.com/blog/2012/07/git.html)
+* [Git 工作流程](http://www.ruanyifeng.com/blog/2015/12/git-workflow.html)
+* [如何使用 Issue 管理软件项目？](http://www.ruanyifeng.com/blog/2017/08/issue.html)
 * [Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+* [Gitflow有害论](http://insights.thoughtworkers.org/gitflow-consider-harmful/)
+* [GIT 之我见 - 反驳 TW 洞见《GITFLOW 有害论》](https://ruby-china.org/topics/29263)
