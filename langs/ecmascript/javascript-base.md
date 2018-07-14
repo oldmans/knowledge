@@ -231,7 +231,7 @@ for(var j = 0, len = a.length; j < len; j++) {
 
   ```js
   function type(obj) {
-    return obj.constructor.toString().replace(/^function (\w+)\(\).+$/, '$1');
+    return obj.__proto__.constructor.toString().replace(/^function (\w+)\(\).+$/, '$1');
   }
   ```
 
