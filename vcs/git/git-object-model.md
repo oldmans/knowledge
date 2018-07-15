@@ -64,7 +64,7 @@ commit message
 
 一个 `tag` 是来标记某一个 `commit` 的方法。
 
-实际上 `tag` 本身是文件名，内容是 `commit` 的对象名。`tag` 是 `commit` 的别名，类似于域名和ip地址的关系。
+实际上 `tag` 本身是文件名，内容是 `commit` 的对象名。`tag` 是 `commit` 的别名，类似于域名和ip地址的关系。
 
 ```
 $ cat .git/refs/tags/v0.0.0
@@ -189,7 +189,7 @@ $ tree .git
 8 directories, 15 files
 ```
 
-查看当前状态，可以看到，此时有一个未追踪的 `README.md` 文件，此文件存在于 `工作区` 中。
+查看当前状态，可以看到，此时有一个未追踪的 `README.md` 文件，此文件存在于 `工作区` 中。
 
 ```sh
 $ git status

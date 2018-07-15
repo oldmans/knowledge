@@ -25,7 +25,7 @@ HTTP认证基于 质询/回应(challenge/response) 的认证模式。
 * HTTP请求报头： `Authorization`
 * HTTP响应报头： `WWW-Authenticate`
 
-基本认证和摘要认证的交互流程是一样的，基本认证是明文的认证方式，摘要认证在基本认证的基础增加了加密机制。
+基本认证和摘要认证的交互流程是一样的，基本认证是明文的认证方式，摘要认证在基本认证的基础增加了加密机制。
 
 ### 基本认证（Basic Authorization）
 
@@ -67,7 +67,7 @@ WWW-authenticate: Basic Realm="Authorization Required"
 注意事项：
 
 1. Http是无状态的，同一个客户端对同一个realm内资源的每一个访问会被要求进行认证。
-2. 客户端通常会缓存 `Username、Password、Authentication Realm`，所以，一般不需要你重新输入用户名和密码。
+2. 客户端通常会缓存 `Username、Password、Authentication Realm`，所以，一般不需要你重新输入用户名和密码。
 3. 以非加密的明文方式传输，虽然转换成了不易被人直接识别的字符串，但是无法防止用户名密码被恶意盗用。
 
 HTTP Basic Authentication虽然十分简单，但仍有一些需要注意的地方：

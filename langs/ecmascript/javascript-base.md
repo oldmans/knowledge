@@ -64,7 +64,7 @@ bool.prop // undefined
 
 ### 引用类型
 
-`Object、Function、String、Number、Error、Regexp、Map、Set` ...
+`Object、Function、String、Number、Error、Regexp、Map、Set` ...
 
 JavaScript 中一切都可以被当做对象！但是只有引用类型才是真正的对象，基本类型除了 `null` 和 `undefined` 之外，都可以像对象一样使用，因为他们有包装类型。
 
@@ -203,7 +203,7 @@ for(var j = 0, len = a.length; j < len; j++) {
   * 不能识别 `基本类型`，会返回 `false`。 `(true instanceof Boolean) -> false`
   * 可以识别 `内置对象类型`
   * 可以识别 `自定义类型` 及其 `父类型`
-  * 不能识别 `undefined`、`null`，因为无 `Undefined`、`Null` 包装类型
+  * 不能识别 `undefined`、`null`，因为无 `Undefined`、`Null` 包装类型
 
 
 * `Object.prototype.toString`

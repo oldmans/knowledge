@@ -130,15 +130,15 @@ CNCF(云原生计算基金会)认为云原生系统需包含的属性：
 
 ### [文档](https://kubernetes.io/docs/home/)
 
-* `Setup` 安装部署Kubernetes集群的说明
-* `Concepts` 这部分内容集中讲解Kubernetes中概念，概念非常多。每个概念后边通常会包含概念的应用示例，内容包含在 `Tasks`。
-* `Tasks` 这部分内容包含一系列的任务，每个任务都只做一件事情，任务中会涉及多个概念，会链接到 `Concepts`。
-* `Tutorials` 教程展示了如何实现比单个任务更大的目标。也会链接到 `Concepts`、`Tasks` 部分
+* `Setup` 安装部署Kubernetes集群的说明
+* `Concepts` 这部分内容集中讲解Kubernetes中概念，概念非常多。每个概念后边通常会包含概念的应用示例，内容包含在 `Tasks`。
+* `Tasks` 这部分内容包含一系列的任务，每个任务都只做一件事情，任务中会涉及多个概念，会链接到 `Concepts`。
+* `Tutorials` 教程展示了如何实现比单个任务更大的目标。也会链接到 `Concepts`、`Tasks` 部分
 * `Reference` API Reference && CLI Reference && Config Reference ...
 
-文档内容多，内容散，在阅读文档的过程中，经常需要链接到其他地方，去了解其他概念。在阅读文档的初期，很多概念还不是熟悉和了解，就很被大量的概念绕的很晕。但是随着文档的深入阅读，逐步了解了文档的结构，相关文档知道知道在什么位置。更重要的是对文档的内容更加的熟悉，就逐渐的在头脑中构建起了Kubernetes的知识体系。所以在阅读文档的时候需要极大的耐心，一点点的拨云见日。
+文档内容多，内容散，在阅读文档的过程中，经常需要链接到其他地方，去了解其他概念。在阅读文档的初期，很多概念还不是熟悉和了解，就很被大量的概念绕的很晕。但是随着文档的深入阅读，逐步了解了文档的结构，相关文档知道知道在什么位置。更重要的是对文档的内容更加的熟悉，就逐渐的在头脑中构建起了Kubernetes的知识体系。所以在阅读文档的时候需要极大的耐心，一点点的拨云见日。
 
-除官方文档之外，网上还可以找到大量的翻译文档、博客文章及教程可以参考，但是建议以官方文档为主，其他文档辅助学习理解，因为官方文档最新最全最权威。
+除官方文档之外，网上还可以找到大量的翻译文档、博客文章及教程可以参考，但是建议以官方文档为主，其他文档辅助学习理解，因为官方文档最新最全最权威。
 
 
 ## Kubernetes Architecture
@@ -161,7 +161,7 @@ etcd 保存了整个集群的状态，所有master的持续状态都存在etcd�
 在kubernetes集群中，每个Node节点都需要运行 `kubelet` 服务。
 
 kubelet会在API Server上注册节点信息，定期向 Master 汇报节点资源使用情况，并通过内置cAdvisor监控容器和节点资源。可以把kubelet理解成Server-Agent架构中的Agent。
-kubelet 根据 PodSpec 的描述工作，Kubelet获得通过各种机制提供的一组PodSpecs并确保这些PodSpec中描述的容器运行正常。
+kubelet 根据 PodSpec 的描述工作，Kubelet获得通过各种机制提供的一组PodSpecs并确保这些PodSpec中描述的容器运行正常。
 
 `kubelet` 提供了一个非常方便的接口来管理容器。Kubelet有一个清单（manifest）字典，每20秒会默认监控一次以更新pod的manifest文件。
 
@@ -177,7 +177,7 @@ apiserver提供了资源操作的唯一入口，并提供认证、授权、访�
 
 #### kube-scheduler
 
-scheduler负责资源的调度，按照预定的调度策略将Pod调度到相应的机器上；即负责 `Pod:Node` 绑定。
+scheduler负责资源的调度，按照预定的调度策略将Pod调度到相应的机器上；即负责 `Pod:Node` 绑定。
 
 #### kube-controller-manager
 
@@ -197,12 +197,12 @@ controller-manager负责维护集群的状态，比如故障检测、自动扩�
 * kubeadm
 * kubelet
 
-启动 Kubernetes 集群的实际上就是 配置 `kubelet.service` 服务并启动，需要先启动 `docker.service`。
-最新的安装方式中不建议直接安装 `etcd` `kube-apiserver` `kube-proxy` 等其他组件，所以这些组件也不再通过 `apt|yum` 源分发，而是打包成Docker镜像，通过容器仓库分发，以容器的方式运行。这种安装方式简化了安装部署过程，不需要启动一系列的服务，更新也更加容易。
+启动 Kubernetes 集群的实际上就是 配置 `kubelet.service` 服务并启动，需要先启动 `docker.service`。
+最新的安装方式中不建议直接安装 `etcd` `kube-apiserver` `kube-proxy` 等其他组件，所以这些组件也不再通过 `apt|yum` 源分发，而是打包成Docker镜像，通过容器仓库分发，以容器的方式运行。这种安装方式简化了安装部署过程，不需要启动一系列的服务，更新也更加容易。
 
-`kubeadm` 是一个工具包，可帮助我们按最佳实践一步步启动Kubernetes群集。kubeadm正在活动的开发当中，目前还是 Bata 版本，2018年会发布 GA 版本。通过 `kubeadm` 启动一个 Master 节点之后，可能需要按自己的需求修改默认的配置参数。
+`kubeadm` 是一个工具包，可帮助我们按最佳实践一步步启动Kubernetes群集。kubeadm正在活动的开发当中，目前还是 Bata 版本，2018年会发布 GA 版本。通过 `kubeadm` 启动一个 Master 节点之后，可能需要按自己的需求修改默认的配置参数。
 
-集群部署完成之后需要访问集群，需要用到客户端工具：
+集群部署完成之后需要访问集群，需要用到客户端工具：
 
 * kubectl
 * [打造高效的Kubernetes命令行终端](https://jimmysong.io/posts/configuring-efficient-kubernetes-cli-terminal/)
@@ -211,7 +211,7 @@ controller-manager负责维护集群的状态，比如故障检测、自动扩�
 
 See: https://kubernetes.io/docs/setup/pick-right-solution
 
-`kubernetes.tar.gz` 中有个 `kubernetes/cluster/kube-up.sh`，实现了文档中列举的全部的部署方案。可以通过参数 `provider` 指定选用的方案。
+`kubernetes.tar.gz` 中有个 `kubernetes/cluster/kube-up.sh`，实现了文档中列举的全部的部署方案。可以通过参数 `provider` 指定选用的方案。
 
 所有的方案就是 `安装部署方式` 和 `安装部署环境` 的组合，某些方式只在 某些环境下才有。
 
@@ -225,8 +225,8 @@ See: https://kubernetes.io/docs/setup/pick-right-solution
 
 * [Setup-k8s-on-centos](./setup-k8s-on-centos.md)
 
-遇到的问题的解决方法：首先要仔细阅读安装文档，避免操作错误，安装过程中观察 `kubeadm`、`kubelet`、`kube-apiserver` 的日志，日志当中会包含错误信息，常见问题google一下很容易就找到解决方案了。
-
+遇到的问题的解决方法：首先要仔细阅读安装文档，避免操作错误，安装过程中观察 `kubeadm`、`kubelet`、`kube-apiserver` 的日志，日志当中会包含错误信息，常见问题google一下很容易就找到解决方案了。
+
 ### Building High-Availability Clusters
 
 ![General architecture](https://raw.githubusercontent.com/kubernetes/kubernetes/release-1.2/docs/design/architecture.png)
@@ -242,14 +242,14 @@ See: https://kubernetes.io/docs/setup/pick-right-solution
 
 ### Cluster Federation
 
-完整的集群联邦允许将在 不同地区运行的Kubernetes集群 或 不同的云提供商提供的Kubernetes集群 组合到一起。然而，许多用户只是想在其单个云提供商的多个区域中运行更多可用的Kubernetes集群。集群联邦可以提供更高级别的可用性。
+完整的集群联邦允许将在 不同地区运行的Kubernetes集群 或 不同的云提供商提供的Kubernetes集群 组合到一起。然而，许多用户只是想在其单个云提供商的多个区域中运行更多可用的Kubernetes集群。集群联邦可以提供更高级别的可用性。
 
 ## 运维
 
-部署到Kubernetes集群上的服务高度依赖一个高度稳定可靠的Kubernetes集群，如果Kubernetes集群自身不够稳定，在其上运行的服务也很容易楚翔问题。
+部署到Kubernetes集群上的服务高度依赖一个高度稳定可靠的Kubernetes集群，如果Kubernetes集群自身不够稳定，在其上运行的服务也很容易楚翔问题。
 
 * 集群监控及健康检查
-* 集群资源的管理及分配，计算资源、网络资源、存储资源
+* 集群资源的管理及分配，计算资源、网络资源、存储资源
 * 集群安全
 * 集群版本更新
 * 其他...
@@ -543,15 +543,15 @@ Api Path：
 * `/api/v1`
 * `/apis/extensions/v1beta1`
 
-版本是 Api 级别的版本，而不是资源或字段级别的版本，确保 Api 清晰且保持一致。
+版本是 Api 级别的版本，而不是资源或字段级别的版本，确保 Api 清晰且保持一致。
 
 不同的 Api 版本意味着不同级别的稳定性和支持
 
-* Alpha level，名称中包含 `alpha`, 如 `v1alpha1`，可能有很多Bugs，默认关闭，未来可能会被修改甚至移除，推荐只用在短声明周期的测试环境
-* Beta level，名称中包含 `beta`, 如 `v1beta1`，经过很全面的测试，默认开启，未来可能会进行一些小的改动，推荐用在不重要的商业逻辑中就，邀请测试提供反馈
+* Alpha level，名称中包含 `alpha`, 如 `v1alpha1`，可能有很多Bugs，默认关闭，未来可能会被修改甚至移除，推荐只用在短声明周期的测试环境
+* Beta level，名称中包含 `beta`, 如 `v1beta1`，经过很全面的测试，默认开启，未来可能会进行一些小的改动，推荐用在不重要的商业逻辑中就，邀请测试提供反馈
 * Stable level，`vX`
 
-通常 `alpha` 版本的默认特性不会开启，需手动开启，如下不同版本的 Api 路径：
+通常 `alpha` 版本的默认特性不会开启，需手动开启，如下不同版本的 Api 路径：
 
 ```
 /apis/apps/v1
@@ -561,7 +561,7 @@ Api Path：
 /apis/apps/v1alpha1
 ```
 
-同一资源，如Deployment，可能同时出现在多个路径下，也就是同时包含在多个 API 版本中。当某一Api资源加入到 Api 当中后，随着稳定性的增强，最终会出现在 Stable 版本中，并随着 Kubernetes 版本进行发布，为了向后兼容，之前 Api 路径下的资源需要保留一段时间，并不会很快删除。
+同一资源，如Deployment，可能同时出现在多个路径下，也就是同时包含在多个 API 版本中。当某一Api资源加入到 Api 当中后，随着稳定性的增强，最终会出现在 Stable 版本中，并随着 Kubernetes 版本进行发布，为了向后兼容，之前 Api 路径下的资源需要保留一段时间，并不会很快删除。
 
 同一资源 可能会同时存在不同的 `ApiVersion` 内，不同路径下的 同一 资源的行为可能是不同的。
 
@@ -622,9 +622,9 @@ kind 主要分为以下三类：
 
 #### Resources
 
-`apiVersion` 负责对资源进行分组和版本管理，`kind` 实际标识了 具体的资源是什么。
+`apiVersion` 负责对资源进行分组和版本管理，`kind` 实际标识了 具体的资源是什么。
 
-所以，所有API返回的所有 JSON 对象必须有 `apiVersion` 和 `kind` 两个字段来明确标识资源。他们可以有服务器从指定的URL路径当中取到，但是客户端需要知道这些值来构建URL路径。所以在 Kubernetes 中，每种资源都可以通过URL定位，并执行相关的Verb，因此，也采用了 RESTful架构 设计 API。
+所以，所有API返回的所有 JSON 对象必须有 `apiVersion` 和 `kind` 两个字段来明确标识资源。他们可以有服务器从指定的URL路径当中取到，但是客户端需要知道这些值来构建URL路径。所以在 Kubernetes 中，每种资源都可以通过URL定位，并执行相关的Verb，因此，也采用了 RESTful架构 设计 API。
 
 ### Field: `metadata`
 
@@ -634,19 +634,19 @@ Every object kind `MUST` have the following metadata in a nested object field ca
 * name: Name
 * uid: UID
 
-虽然上述字段要求必须存在，但是上述字段并不是一定要我们通过配置文件指定。
+虽然上述字段要求必须存在，但是上述字段并不是一定要我们通过配置文件指定。
 
 Every object `SHOULD` have the following metadata in a nested object field called `"metadata"`:
 
 * resourceVersion: 资源版本
 * generation: 一个代表期望状态的特定代的序列号
-* creationTimestamp: 创建时间戳
-* deletionTimestamp: 删除时间戳
+* creationTimestamp: 创建时间戳
+* deletionTimestamp: 删除时间戳
 * selfLink: 资源自身的访问路径
 * labels: labels
 * annotations: annotations
 
-上述字段中只有 `labels`、`annotations` 需要我们配置，这两个字段中可能还有其他非配置文件中写入的值。
+上述字段中只有 `labels`、`annotations` 需要我们配置，这两个字段中可能还有其他非配置文件中写入的值。
 
 ### Field: `metadata.namespace` Namespaces
 
@@ -661,11 +661,11 @@ Api Path: `/apis/{apiGroup}/{version}/namespaces/{namespace}`
 
 Kubernetes 支持在同一集群之上虚拟多个集群。虚拟集群称为 `namespace`，也就是命名空间，对资源、权限等进行隔离。
 
-命名空间 可以将不同的 项目或组 隔离到比他的命名空间当中去，方便对权限进行隔离，同时可以按命名空间划分资源或配置资源限额。
+命名空间 可以将不同的 项目或组 隔离到比他的命名空间当中去，方便对权限进行隔离，同时可以按命名空间划分资源或配置资源限额。
 
-命名空间 为名称提供了一个作用域，资源的名称在名称空间中需要是唯一的，但是在不同的命名空间可以相同。
+命名空间 为名称提供了一个作用域，资源的名称在名称空间中需要是唯一的，但是在不同的命名空间可以相同。
 
-命名空间 可为域名提供一个作用域，创建 Service 的时候，关联的 DNS entry `<service-name>.<namespace-name>.svc.cluster.local`
+命名空间 可为域名提供一个作用域，创建 Service 的时候，关联的 DNS entry `<service-name>.<namespace-name>.svc.cluster.local`
 
 大部分资源都在命名空间中，Namespace 本身并不在命名空间中，低级的资源如 Nodes、persistentVolumes 也不在命名空间中。Events 是一个例外，它可能在也可能不在命名空间中，取决于是关于什么的 Events。
 
@@ -711,7 +711,7 @@ eg. `/api/v1/namespaces/default/pods/nginx-deployment-5964dfd755-9lnzv`
 
 Kubernete系统生成一个字符串来唯一标识一个 Objects，即 `UID`，在 Kubernetes 集群的整个生命周期中创建的每个对象都有一个不同的UID。它旨在时间尺度上区分类似实体。
 
-`Name` 和 `UID` 不应该进行修改，Kubernete可能直接拒绝 `Name` 和 `UID` 的修改操作。
+`Name` 和 `UID` 不应该进行修改，Kubernete可能直接拒绝 `Name` 和 `UID` 的修改操作。
 
 ```sh
 ➜  ~ kubectl get pods etcd-k8s-master1 -n kube-system -o yaml
@@ -740,7 +740,7 @@ spec:
 
 `Labels` 是 Objects 形式的属性，以 `key/value` 形式存在。
 
-`Labels` 设计的目的就是用来被 `Select` 的，所以设置 `Labels` 时主要考虑的就是 资源 有可能如何被筛选。不被 Select 的 信息应该 Annotations 中。
+`Labels` 设计的目的就是用来被 `Select` 的，所以设置 `Labels` 时主要考虑的就是 资源 有可能如何被筛选。不被 Select 的 信息应该 Annotations 中。
 
 ```yaml
 metadata:
@@ -818,7 +818,7 @@ metadata:
 
 Pod 是 Kubernetes 的最基本组成部分，是 Kubernetes 对象模型中最小的可创建的部署单元。Pod 代表集群中一个运行的进程。
 
-Pod 封装了 应用程序容器（或者在某些情况下是多个容器）、存储资源、一个唯一的网络IP、以及支配容器如何运行的选项。
+Pod 封装了 应用程序容器（或者在某些情况下是多个容器）、存储资源、一个唯一的网络IP、以及支配容器如何运行的选项。
 
 Pod 表示一个部署单元，Kubernetes 中的应用程序的单个实例，可能由单个容器组成，也可能由少数 紧密耦合 且 共享资源 的容器组成。
 
@@ -826,25 +826,25 @@ Pod 构建了一个特定于应用程序的 “逻辑主机” 模型 - 它包�
 
 Pod 是容器的载体，所有的容器都在 Pod 中被管理，一个容器或多个容器放在一个 Pod 中作为一个单元的整体。同时，Pod 也作为一层中间层存在，方便支持其他容器引擎的容器管理。而Kubernetes 管理好 Pod 即可，无需关系底层容易细节。
 
-Docker 是最常见的容器运行时引擎，但是 Pod 也支持其他的容器引擎。
+Docker 是最常见的容器运行时引擎，但是 Pod 也支持其他的容器引擎。
 
 Kubernetes 集群中的 Pod 可用于两种主要方式：
 
 * 运行一个容器的Pod
 * 运行多个需要协作的容器的Pod
 
-每一个 Pod 都意味着运行一个给定应用程序的实例。如果你需要水平扩展应用，那就需要使用多个Pods，每个实例一个。在 Kubernetes 中，这通常被称为 replication。
+每一个 Pod 都意味着运行一个给定应用程序的实例。如果你需要水平扩展应用，那就需要使用多个Pods，每个实例一个。在 Kubernetes 中，这通常被称为 replication。
 Replicated Pods 通常由一个称为 Controller 的抽象创建和管理。
 
 1. Pod如何管理多个容器？
 
-Pod 的设计是为了支持多个相互协作的容器组成一个紧密结合的服务单元。Pod中的容器自动的协同定位或协同调度到同一台物理机或虚拟机上。他们能够共享资源和依赖，相互通信，并协调何时以及如何终止。
+Pod 的设计是为了支持多个相互协作的容器组成一个紧密结合的服务单元。Pod中的容器自动的协同定位或协同调度到同一台物理机或虚拟机上。他们能够共享资源和依赖，相互通信，并协调何时以及如何终止。
 
 > Note：组合多个容器到一个Pod中相对来说是一种高级的用例。应该仅在特定的机密耦合的实例使用这种模式。例如，你有一个容器用作文件服务的WebServer，一个分离的sidecar容器从上游的源更新文件。
 
-每个 Pod 都被分配一个唯一的IP地址，Pod 中的容器共享同一个网络命名空间，包括IP地址和端口号。Pod 中的容器可以通过 `localhost` 进行通信。当 Pod 中的容器需要与外部的容器需要相互通信的时候，他们必须协调如何使用共享网络资源，如端口号。
+每个 Pod 都被分配一个唯一的IP地址，Pod 中的容器共享同一个网络命名空间，包括IP地址和端口号。Pod 中的容器可以通过 `localhost` 进行通信。当 Pod 中的容器需要与外部的容器需要相互通信的时候，他们必须协调如何使用共享网络资源，如端口号。
 
-Pod 可以指定一组共享存储卷，Pod中的所有容器都可以访问共享卷，允许这些容器共享数据。数据卷允许持久化数据在容器需要重启的情况下保持存在。可以查看Volumes有关的内容了解更多信息。
+Pod 可以指定一组共享存储卷，Pod中的所有容器都可以访问共享卷，允许这些容器共享数据。数据卷允许持久化数据在容器需要重启的情况下保持存在。可以查看Volumes有关的内容了解更多信息。
 
 2. Pods的使用
 
@@ -878,12 +878,12 @@ spec:                     # pod中容器的详细定义
 
 Pod 由一个或多个容器组成，这些容器共享存储和网络，以及如何运行容器的规范。
 
-Pod 由一个叫 `pause` 的根容器，加上一个或多个用户自定义的容器构造。`pause` 根容器的状态便代表了这一组容器的状态，Pod 里多个业务容器共享 IP 和 Volume。
+Pod 由一个叫 `pause` 的根容器，加上一个或多个用户自定义的容器构造。`pause` 根容器的状态便代表了这一组容器的状态，Pod 里多个业务容器共享 IP 和 Volume。
 
 kubernetes中的 `pause` 容器便被设计成为每个业务容器提供以下功能：
 
 * 在 pod 中担任Linux命名空间共享的基础，其他容器共享pause命名空间，不同容器犹如在localhost中；
-* 启用 pid namespace，充当 init 进程。一旦 init 进程被销毁，同一 pid namespace 下的进程也随之被销毁，并容器进程被回收相应资源。
+* 启用 pid namespace，充当 init 进程。一旦 init 进程被销毁，同一 pid namespace 下的进程也随之被销毁，并容器进程被回收相应资源。
 
 pause根容器实现：
 
@@ -1102,7 +1102,7 @@ spec:
 
 6. Pod运行
 
-一旦 Pod 被 Binding 到某个 Node 上，该 Node 上的 kubelet 将开始管理 Pod 的生命周期，从创建到销毁。
+一旦 Pod 被 Binding 到某个 Node 上，该 Node 上的 kubelet 将开始管理 Pod 的生命周期，从创建到销毁。
 
 目标 Node 上的 kubelet 通过 kube-apiserver 监听到 kube-scheduler 触发的 Pod 和目标 Node 的绑定事件，就会拉取镜像和启动容器。
 
@@ -1145,10 +1145,10 @@ status.phase [Pod phase](https://kubernetes.io/docs/concepts/workloads/pods/pod-
 
   Phase     | Description
   ----------|------------
-  Pending   | Kubernetes已经接受了Pod，该Pod还在调度或镜像拉取中。
+  Pending   | Kubernetes已经接受了Pod，该Pod还在调度或镜像拉取中。
   Running   | Pod内所有的容器已创建，且至少有一个容器处于运行状态，正在启动或重启状态。
   Succeeded | Pod内所有容器都成功的执行完毕，并不会重新启动。
-  Failed    | Pod内所有容器都已终止，其中至少有一个容器以失败的状态终止。
+  Failed    | Pod内所有容器都已终止，其中至少有一个容器以失败的状态终止。
   Unknown   | 由于某种原因无法获取Pod的状态，比如网络不通。
 
 status.conditions [Pod condition](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.9/#podcondition-v1-core
@@ -1337,7 +1337,7 @@ Arguments、Environment Variables、Files、Secrets、PodPreset
 
 Pod lifetime
 
-一般来讲，Pod是不会消失的，除非主动销毁他们。可以是用户或控制器。
+一般来讲，Pod是不会消失的，除非主动销毁他们。可以是用户或控制器。
 
 Pod 的一旦被创建，便不能被修改，如更新容器镜像版本或其他，如果想更新Pod，只能通过删除 Pod 然后创建新 Pod 实现，可以手动删除之后创建，也可以通过Controller来实现。
 
@@ -1347,7 +1347,7 @@ Voluntary and Involuntary Disruptions
 
 PodDisruptionBudget
 
-一个正在运行的 Pod，无法对其 `.spec` 进行修改，如果想修改，只能启动新的容器，删除旧的容器。所以直接使用 `kind: Pod` 创建资源，对更新时非常不方便的。
+一个正在运行的 Pod，无法对其 `.spec` 进行修改，如果想修改，只能启动新的容器，删除旧的容器。所以直接使用 `kind: Pod` 创建资源，对更新时非常不方便的。
 
 #### Controller
 
@@ -1399,7 +1399,7 @@ ReplicationController 拥有自己的 `.metadata.labels`，通常情况下与 `.
 
 ReplicationController 管理所有 `.spec.selector` 匹配的 `Pods`，它不区分 `Pods` 是不是它自己创建的。这就使 ReplicationController 有能力影响正在运行的 `Pods`。
 如果指定 `.spec.selector`，则不需与 `.spec.template.metadata.labels` 相同。如果未指定，则默认为 `.spec.template.metadata.labels`。
-ReplicationController 只支持 Equal-based Selector，而 ReplicationSet 支持 Set-based Selector，这也是两者目前唯一的区别。
+ReplicationController 只支持 Equal-based Selector，而 ReplicationSet 支持 Set-based Selector，这也是两者目前唯一的区别。
 
 不应该创建与 该 `.spec.selector` 相匹配的 Pod，不论是直接创建还是通过其他控制器创建。如果这样做了，其他Pod也会纳入这个 ReplicationController 的管理范围，Kubernetes并不防止这种情况。这可能会导致严重的问题。
 
@@ -1411,11 +1411,11 @@ ReplicationController 只支持 Equal-based Selector，而 ReplicationSet 支�
 
 可以通过改变 Pod 的 Label 将 Pod 与 ReplicationController 分离，ReplicationController 将会 启动的一个新的 Pod 顶替 原来的 Pod。
 
-如上所述，ReplicationController 的核心功能在于保持 Pod 数量在期望的状态。最终实现了 保持某一固定版本（配置）的 Pod 数量在期望的状态。
+如上所述，ReplicationController 的核心功能在于保持 Pod 数量在期望的状态。最终实现了 保持某一固定版本（配置）的 Pod 数量在期望的状态。
 
 常见的使用模式：
 
-  * Rescheduling 确保指定数量的Pod在运行，如果Pod运行失败，将会ReplicationController会触发重新调度。
+  * Rescheduling 确保指定数量的Pod在运行，如果Pod运行失败，将会ReplicationController会触发重新调度。
   * Scaling 更新 `.spec.replicas` 字段实现水平伸缩。
   * Rolling updates 滚动更新，创建一个新的Pod，删除一个旧的Pod，逐步的替换。used by `Deployment`。`kubectl rolling-update`。
   * Multiple release tracks
@@ -1635,7 +1635,7 @@ spec:
 
 #### kind: CronJob
 
-CronJob 即定时任务，在 Job 的基础上增加时间，类似于 crontab，在指定的时间周期运行指定的任务。
+CronJob 即定时任务，在 Job 的基础上增加时间，类似于 crontab，在指定的时间周期运行指定的任务。
 
 CronJob Spec:
 
@@ -1667,13 +1667,13 @@ spec:
 
 #### kind: Service
 
-Pod 和 Controllers 解决了 Workload 按照期望的状态执行的问题，并实现了很多非常实用了功能，但是还有问题需要解决。如果一组 Pod 通过网络对外提供服务，那么直接访问 Pod 服务将会非常的不方便，Pod 本身非常不稳地，经过 Controller 的控制调整之后，Pod 会被重新调度，在被调度之后 Pod 可能被移除或新建，IP地址会发生变化，无法稳定的访问地址，无论是外部的访问还是内部其他Pod的访问，维护 PodIP 列表将是非常麻烦的事情，此时需要通过 服务注册发现 或 DNS 来解决问题。
+Pod 和 Controllers 解决了 Workload 按照期望的状态执行的问题，并实现了很多非常实用了功能，但是还有问题需要解决。如果一组 Pod 通过网络对外提供服务，那么直接访问 Pod 服务将会非常的不方便，Pod 本身非常不稳地，经过 Controller 的控制调整之后，Pod 会被重新调度，在被调度之后 Pod 可能被移除或新建，IP地址会发生变化，无法稳定的访问地址，无论是外部的访问还是内部其他Pod的访问，维护 PodIP 列表将是非常麻烦的事情，此时需要通过 服务注册发现 或 DNS 来解决问题。
 
 然而，Kubernetes 通过 Services 巧妙的解决了这个问题。
 
-Kubernete 能追踪到 Pods 的变化，从而为实现 Services 提供了条件。
+Kubernete 能追踪到 Pods 的变化，从而为实现 Services 提供了条件。
 
-Kubernete Service 是一个定义了一组 Pod 的策略的抽象，我们也有时候叫做宏观服务。这些被服务标记的Pod都是（一般）通过 label Selector 决定的，Service 也可以没有 label Selector。
+Kubernete Service 是一个定义了一组 Pod 的策略的抽象，我们也有时候叫做宏观服务。这些被服务标记的Pod都是（一般）通过 label Selector 决定的，Service 也可以没有 label Selector。
 
 对于Kubernete原生的应用，Kubernete提供了一个简单的Endpoints API，这个Endpoints api的作用就是当一个服务中的pod发生变化时，Endpoints API随之变化，对于那些不是原生的程序，Kubernetes提供了一个基于虚拟IP的网桥的服务，这个服务会将请求转发到对应的后台pod
 
@@ -1685,7 +1685,7 @@ kind: Service
 metadata:
   name: my-service
 spec:
-  type: ClusterIP # 该字段值为 ClusterIP 时，可以省略。
+  type: ClusterIP # 该字段值为 ClusterIP 时，可以省略。
   selector:
     app: MyApp
   ports:
@@ -1706,28 +1706,28 @@ spec:
   * `Service` 有个关联的 `Endpoints` 对象表示 `target`。
   * `Service` 指定 `selector` 时会自动创建 `Endpoints`，不指定则不会创建 `Endpoints`。
 
-  `Service` 像一个智能代理一样，会将请求自动的代理到 指定的后端 Pods。`Service` 还可以将请求代理到非 Pods 后端服务中，例如 有一个已经在运行的数据库集群，或者 运行在其他命名空间内Pods对外提供的服务。这种情况下，`.spec.selector` 就不在需要了。此时需要自定义 `Endpoints`
+  `Service` 像一个智能代理一样，会将请求自动的代理到 指定的后端 Pods。`Service` 还可以将请求代理到非 Pods 后端服务中，例如 有一个已经在运行的数据库集群，或者 运行在其他命名空间内Pods对外提供的服务。这种情况下，`.spec.selector` 就不在需要了。此时需要自定义 `Endpoints`
 
-* `.spec.ports` 可以定义多个端口映射，访问 `tcp://ClusterIP:port` 会被转发到 `tcp://ClusterIP:targetPort`，当 `.spec.type=NodePort` 时 访问 `tcp://NodeIP:NodePort` 同样会被转发到 `tcp://ClusterIP:targetPort`。`targetPort` 默认情况与 `port` 相同，`targetPort` 可以是字符串，指的是后端 `Pod` 中端口的名称，`Pod` 可以为暴露出来的端口设置一个名称。
+* `.spec.ports` 可以定义多个端口映射，访问 `tcp://ClusterIP:port` 会被转发到 `tcp://ClusterIP:targetPort`，当 `.spec.type=NodePort` 时 访问 `tcp://NodeIP:NodePort` 同样会被转发到 `tcp://ClusterIP:targetPort`。`targetPort` 默认情况与 `port` 相同，`targetPort` 可以是字符串，指的是后端 `Pod` 中端口的名称，`Pod` 可以为暴露出来的端口设置一个名称。
 
-* `.spec.ports[].protocol` 目前支持 `TCP` 和 `UDP` 协议。
+* `.spec.ports[].protocol` 目前支持 `TCP` 和 `UDP` 协议。
 
 Service Type
 
-* `.spec.type=ClusterIP` 默认，可省略，这种模式下只暴露Service在集群内部ClusterIP上，只在集群内部可达。
+* `.spec.type=ClusterIP` 默认，可省略，这种模式下只暴露Service在集群内部ClusterIP上，只在集群内部可达。
 
   可以通过 `.spec.clusterIP` 指定 `clusterIP`，有如下几种情形：
 
   * `.spec.clusterIP=None`
 
-    这是一种被称为 `Headless services` 的 Service，这种 `Services` 不会分配 `ClusterIP`，并且 `kube-proxy` 也 不会做任何事情。 DNS 依赖于 `selector` 的配置。简单说，这种 `Services` 就是用来配置DNS的。
+    这是一种被称为 `Headless services` 的 Service，这种 `Services` 不会分配 `ClusterIP`，并且 `kube-proxy` 也 不会做任何事情。 DNS 依赖于 `selector` 的配置。简单说，这种 `Services` 就是用来配置DNS的。
 
   * `.spec.clusterIP=10.224.x.x`, 如果指定非 `None` 值，必须为有效的IP地址并且在 `service-cluster-ip-range` CIDR 范围内
-  * `.spec.clusterIP`, 如果未指定，Kubernetes将会自动分配一个，此时，可以通过 `service-name.namespace-name` 域名 访问服务
+  * `.spec.clusterIP`, 如果未指定，Kubernetes将会自动分配一个，此时，可以通过 `service-name.namespace-name` 域名 访问服务
 
-* `.spec.type=NodePort` 暴露Service在每个NodeIP的一个静态端口上。Kubernetes自动创建将NodeIP路由到的ClusterIP服务。可以通过`<NodeIP>:<NodePort>`从集群外部访问集群内部的服务。
+* `.spec.type=NodePort` 暴露Service在每个NodeIP的一个静态端口上。Kubernetes自动创建将NodeIP路由到的ClusterIP服务。可以通过`<NodeIP>:<NodePort>`从集群外部访问集群内部的服务。
 
-  * `.spec.nodePort=` 可以设置一个在每个Node节点上监听的端口，未设置时，Kubernetes将会自动分配并设置此字段
+  * `.spec.nodePort=` 可以设置一个在每个Node节点上监听的端口，未设置时，Kubernetes将会自动分配并设置此字段
 
 * `.spec.type=LoadBalancer` 使用云提供商的负载均衡器在外部公开该服务。
 
@@ -1809,7 +1809,7 @@ spec:
 
 * 直接访问，`tcp://ClusterIP:port`，`tcp://NodeIP:NodePort`
 * 通过环境变量获取到服务地址后访问 `{SVCNAME}_SERVICE_HOST:{SVCNAME}_SERVICE_PORT`
-* DNS[强烈建议] `service-name.namespace-name`
+* DNS[强烈建议] `service-name.namespace-name`
 
 Virtual IPs and service proxies
 
@@ -1864,7 +1864,7 @@ client(eg.Pod) -> netfilter -> Pods
 网络相关概念
 
 1. `Network Namespace`：Linux在网络栈中引入网络命名空间，将独立的网络协议栈隔离到不同的命令空间中，彼此间无法通信；docker利用这一特性，实现不容器间的网络隔离。
-1. `Veth Pair`：Veth设备对的引入是为了实现在不同网络命名空间的通信。可以通过Veth设备对连通容器和容器，`Container-veth-docker0-veth-Container`。
+1. `Veth Pair`：Veth设备对的引入是为了实现在不同网络命名空间的通信。可以通过Veth设备对连通容器和容器，`Container-veth-docker0-veth-Container`。
 1. `TUN/TAP`：TUN/TAP 设备是一种让用户态程序向内核协议栈注入数据的设备
 1. `Iptables/Netfilter`：Netfilter负责在内核中执行各种挂接的规则(过滤、修改、丢弃等)，运行在内核模式；Iptables模式是在用户模式下运行的进程，负责协助维护内核中Netfilter的各种规则表；通过二者的配合来实现整个Linux网络协议栈中灵活的数据包处理机制。`kube-proxy`会安装适当的NAT规则。
 1. `Bridge`：网桥是一个二层网络设备，通过网桥可以将Linux支持的不同的端口连接起来，并实现类似交换机那样的多对多的通信。`docker0`就是一个网桥。
@@ -1891,11 +1891,11 @@ ContainerIP         | 容器的IP，容器的网络是个隔离的网络空间�
 1. 容器直接使用目标PodIP/ContainerIP访问，默认通过容器内部的eth0发送出去。
 1. 将 Container eth0 和 docker0设备 绑定成 VethPair，报文通过 VethPair 到达 docker0。
 1. docker0 桥接到 flannel0 设备，所以报文经 docker0 后被发送到 flannel0。
-1. flannel0 虚拟网卡的一端连着协议栈，另一端连着应用程序 flanneld，所以报文在到达 flannel0 后进一步被发送到 flanneld。
+1. flannel0 虚拟网卡的一端连着协议栈，另一端连着应用程序 flanneld，所以报文在到达 flannel0 后进一步被发送到 flanneld。
 1. flanneld 通过 etcd 维护了各个节点之间的路由表，把原来的报文UDP封装一层，通过配置的 `iface` 指定的网络设备发送出去。
 1. 报文通过主机之间的网络找到目标主机，NodeIP -> NodeIP。
-1. 报文到达另外一台主机后按相反的次序将数据包发送到 Container。
-1. `Container1 eth0 -> docker0 -> flannel0 -> flanneld -> Node1 eth0 -> Node2 eth0 -> flanneld -> flannel0 -> docker0 -> Container2 eth0`
+1. 报文到达另外一台主机后按相反的次序将数据包发送到 Container。
+1. `Container1 eth0 -> docker0 -> flannel0 -> flanneld -> Node1 eth0 -> Node2 eth0 -> flanneld -> flannel0 -> docker0 -> Container2 eth0`
 
 启动flannel服务
 
@@ -1904,7 +1904,7 @@ flannel服务需要先于Docker启动。flannel服务启动时主要做了以下
 * 从 `etcd` 中获取 `network` 的配置信息。
 * 划分 `subnet`，并在 `etcd` 中进行注册。
 * 将子网信息记录到 `/run/flannel/subnet.env` 中。
-* 根据 `/run/flannel/subnet.env` 中的子网信息重启 `dockerd` 服务
+* 根据 `/run/flannel/subnet.env` 中的子网信息重启 `dockerd` 服务
 
 ### Storage
 

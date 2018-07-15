@@ -6,7 +6,7 @@ TypeName  = identifier | QualifiedIdent .
 TypeLit   = ArrayType | SliceType | StructType | MapType | PointerType | FunctionType | InterfaceType | ChannelType .
 ```
 
-Go的数据类型分四大类：`基础类型（数字、字符串、布尔值）`、`聚合类型（数组、结构体）`、`复合类型（数组、切片、字典、结构体）`、`引用类型（指针、切片、字典、函数、通道）`、`接口类型`
+Go的数据类型分四大类：`基础类型（数字、字符串、布尔值）`、`聚合类型（数组、结构体）`、`复合类型（数组、切片、字典、结构体）`、`引用类型（指针、切片、字典、函数、通道）`、`接口类型`
 
 
 Type         | Literal               | Zero
@@ -18,7 +18,7 @@ Type         | Literal               | Zero
  []SliceType | SliceType{1, 2, 3}    | nil
  {}StructType| Type{key: "value"}    |
 
-## 类型分类
+## 类型分类
 
 ### 基础类型
 
@@ -32,7 +32,7 @@ uint、uint8、uint16、uint32、uint64
 ```go
 byte int32同义词，强调原始数据（二进制）而非数值
 rune int32同义词，表示Unicode码点
-uintptr 足以存放指针
+uintptr 足以存放指针
 ```
 
 * 浮点数
