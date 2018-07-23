@@ -69,6 +69,14 @@ DevOps（Development-Operations）是一种重视`“软件开发人员（Dev）
 * [你如何理解敏捷开发？](https://www.zhihu.com/question/19645396)
 * [敏捷软件开发](https://zh.wikipedia.org/wiki/敏捷软件开发)
 
+## Wiki
+
+* [Glob](https://en.wikipedia.org/wiki/Glob_(programming))
+
+## StackOverflow
+
+* [PUT vs. POST in REST](https://stackoverflow.com/questions/630453/put-vs-post-in-rest)
+
 ## Links
 
 * [提问的智慧](http://doc.zengrong.net/smart-questions/cn.html)

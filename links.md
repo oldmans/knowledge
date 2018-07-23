@@ -2,6 +2,7 @@
 
 ## Blogs
 
+* [奔三路](http://www.bslxx.com/)
 * [扶墙老师说](http://afoo.me/)
 * [云风的 BLOG](http://blog.codingnow.com/)
 * [老赵点滴 - 追求编程之美](http://blog.zhaojie.me/)
@@ -20,6 +21,7 @@
 * [MacTalk-池建强的随想录](http://macshuo.com/)
 * [张鑫旭](http://www.zhangxinxu.com/)
 * [阳志平的网志](http://www.yangzhiping.com/)
+* [颜海镜](https://yanhaijing.com/)
 * [Get社区](http://get.ftqq.com/)
 * [掘金](https://juejin.im/)
 * [coding博客](https://blog.coding.net/)

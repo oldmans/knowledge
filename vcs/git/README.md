@@ -47,6 +47,7 @@
 * [what-are-the-differences-between-double-dot-and-triple-dot-in-git-com](http://stackoverflow.com/questions/462974/what-are-the-differences-between-double-dot-and-triple-dot-in-git-com#answer-24186641)
 * [git-branching-and-tagging-best-practices](https://softwareengineering.stackexchange.com/questions/165725/git-branching-and-tagging-best-practices)
 * [why-should-i-use-tags-vs-release-beta-branches-for-versioning](https://stackoverflow.com/questions/9810050/why-should-i-use-tags-vs-release-beta-branches-for-versioning)
+* [what-does-git-push-do-exactly](https://stackoverflow.com/questions/26005031/what-does-git-push-do-exactly?)
 
 ## Refs
 

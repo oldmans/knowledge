@@ -153,3 +153,6 @@
 * [[译] 深入理解 Promise 五部曲：3. 可靠性问题](https://segmentfault.com/a/1190000000593885)
 * [[译] 深入理解 Promise 五部曲：4. 扩展问题](https://segmentfault.com/a/1190000000600268)
 * [[译] 深入理解 Promise 五部曲：5. LEGO](https://segmentfault.com/a/1190000000611040)
+* [当面试官问你Promise的时候，他究竟想听到什么？](https://zhuanlan.zhihu.com/p/29235579)
+* [这一次，彻底弄懂 JavaScript 执行机制](https://juejin.im/post/59e85eebf265da430d571f89)
+* [一个Promise面试题](https://github.com/lzlu/Blog/issues/7)
