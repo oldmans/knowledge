@@ -22,7 +22,7 @@ git filter-branch --force --index-filter 'git rm -r --cached --ignore-unmatch te
 
 执行完成后，归档历史已经清理完成，但还有一些垃圾文件，用下面的命令清理
 
-```
+```sh
 rm -rf .git/refs/original/
 git reflog expire --expire=now --all
 git gc --prune=now

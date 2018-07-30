@@ -39,15 +39,16 @@
 * [更改GitCommit時間](http://blog.dm4.tw/blog/2015/04/19/modify-git-commit-time/)
 * [在Git，怎么能更改一个旧的提交时间戳？](http://qa.helplib.com/93646)
 * [Git 清理无效的远程追踪分支](http://www.jianshu.com/p/884ff6252be5)
-* [如何删除已合并的所有git分支？](https://gxnotes.com/article/12889.html)
-* [删除不存在对应远程分支的本地分支]()
+* [如何删除已合并的所有git分支？](http://bbs.bugcode.cn/t/701)
 
-## Stackoverflow
+## StackOverflow
 
 * [what-are-the-differences-between-double-dot-and-triple-dot-in-git-com](http://stackoverflow.com/questions/462974/what-are-the-differences-between-double-dot-and-triple-dot-in-git-com#answer-24186641)
 * [git-branching-and-tagging-best-practices](https://softwareengineering.stackexchange.com/questions/165725/git-branching-and-tagging-best-practices)
 * [why-should-i-use-tags-vs-release-beta-branches-for-versioning](https://stackoverflow.com/questions/9810050/why-should-i-use-tags-vs-release-beta-branches-for-versioning)
-* [what-does-git-push-do-exactly](https://stackoverflow.com/questions/26005031/what-does-git-push-do-exactly?)
+* [what-does-git-push-do-exactly](https://stackoverflow.com/questions/26005031/what-does-git-push-do-exactly)
+* [What are commit-ish and tree-ish in Git?](https://stackoverflow.com/questions/23303549/what-are-commit-ish-and-tree-ish-in-git)
+* [how-can-i-delete-all-git-branches-which-have-been-merged](https://stackoverflow.com/questions/6127328/how-can-i-delete-all-git-branches-which-have-been-merged)
 
 ## Refs
 
