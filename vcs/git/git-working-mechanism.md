@@ -1,10 +1,12 @@
 # Git Working Mechanism
 
-## 仓库管理
+## 仓库创建
 
 Git是一个分布式的版本控制系统，这意味着在Git中版本库有 `本地版本库` 和 `远程版本库` 之分。
+
 每个远程仓库可以有多个本地仓库，同时一个本地版本库可以同时对应多个远程版本库，多个远程版本库是从一个最原始的版本库 `Fork`（实际上也是`clone`）产生的，`Fork` 出来的版本库和本地 `Clone` 的仓库是类似的，他们有一个相同的 `上游仓库`（即原始仓库），这些版本库直接可以通过 `PullRequest` 或 `MergeRequest` 操作进行仓库的交互。
-本地仓库对应的远程仓库记录在 `.git/config` 文件中。本地仓库可以于多个的远程仓库 `pull/push` 代码。
+
+本地仓库对应的远程仓库记录在 `.git/config` 文件中。本地仓库可以与多个的远程仓库 `pull/push` 代码。
 
 ### [Init](https://git-scm.com/docs/git-init)
 
@@ -342,7 +344,7 @@ $ tree .git/refs
     └── v0.0.0
 ```
 
-以上对应关系很明显：
+以上对应关系：
 
   head@local                     |  remote@local                             | remote@remote
 ---------------------------------|-------------------------------------------|---------------------------------
@@ -557,6 +559,17 @@ Options:
   * `--no-recurse-submodules`
   * `--submodule-prefix=<path>`
 
+
+再看对应关系：
+
+  head@local                     |  remote@local                             | remote@remote
+---------------------------------|-------------------------------------------|---------------------------------
+`master`                         | `origin/master`                           | `master`
+`feature/travis-ci`              | `origin/feature/travis-ci`                | `feature/travis-ci`
+`refs/heads/feature/travis-ci`   | `refs/remotes/origin/feature/travis-ci`   | `refs/heads/feature/travis-ci`
+
+`git fetch` 将 `remote@remote` fetch `remote@local`，而 `RefSpec（+refs/heads/*:refs/remotes/origin/*）` 前面的 `+` 使 Git 在不能快速前进的情况下也强制更新，所以不会出现 `remote@remote --merge--> remote@local` 的情况，实际上合并是不合理的行为，因为本地的 `refs/remotes/origin/*` 就是与远程保持同步的，如果合并了，就不同步了，更重要的是，远程分支可能修改了分支历史，如果合并，修改前的内容又合并进版本库了，有可能还需要解决冲突，而之后的 `remote@local --merge--> head@local` 又会有可能合并。
+
 ```sh
 git fetch                                         # 获取 所有远程仓库 上的所有分支，将其记录到 .git/FETCH_HEAD 文件中
 git fetch -all                                    # 获取 所有远程仓库 上的所有分支
@@ -625,7 +638,6 @@ $ git branch -r --merged | egrep -v "(^\*|master|develop|release)" | sed 's/orig
 To github.com:liuyanjie/knowledge.git
  - [deleted]             feature/xxxx
 ```
-
 
 ```sh
 $ git fetch origin master:refs/remotes/origin/master topic:refs/remotes/origin/topic
@@ -718,11 +730,17 @@ Merge branch 'master' of github.com:liuyanjie/knowledge into master
 
 出现 `远程` 合并到 `本地` 的情形 在 Git 中是一种不良好的实践，应该极力避免甚至是禁止出现，这种情形在多个人同时在同一个分支上开发的时候非常容易出现。
 
+记住一点：一般来书，`分支`是要合并到远程服务器上的分支，而不是远程服务分支合并到本地分支的。
+
 在实际开发过程中，所有的合并操作都应该发生在远程服务器上，保持所有的分支有清晰的历史。同样，也应该避免不必要的合并，甚至是禁止合并。
 
 > 一般情况下，创建了分支必然需要通过合并来将分支上的内容整合到分支的基上，但是也有不合并的其他方法
 
 合并产生的 `Commit` 并未给版本库带来新的改变，但是却使版本历史不够清晰了。
+
+合并使分支历史从单向链表变成了有向图，一堆线杂乱无章交错，分支历史难以理解。
+
+合并产生的 `Commit` 有两个或多个父 `Commit`， `Reset` 难以进行。
 
 如何避免 本地合并？
 
@@ -825,16 +843,65 @@ D---E-----------H ← master
 * `merge` 动作的默认目标是当前分支，若要切换目标，可以直接切换分支
 * `merge` 动作的来源则取决于你是否有 `tracking`，若有则读取配置自动完成，若无则请指明【来源】
 
+`pull` 时还可能存在远程分支不存在的情况
+
+```sh
+$ git checkout -b test
+$ git pull
+There is no tracking information for the current branch.
+Please specify which branch you want to merge with.
+See git-pull(1) for details.
+
+    git pull <remote> <branch>
+
+If you wish to set tracking information for this branch you can do so with:
+
+    git branch --set-upstream-to=origin/<branch> test
+
+$ git branch --set-upstream-to=origin/test test
+error: the requested upstream branch 'origin/test' does not exist
+hint:
+hint: If you are planning on basing your work on an upstream
+hint: branch that already exists at the remote, you may need to
+hint: run "git fetch" to retrieve it.
+hint:
+hint: If you are planning to push out a new local branch that
+hint: will track its remote counterpart, you may want to use
+hint: "git push -u" to set the upstream config as you push.
+```
+
+```sh
+$ git pull
+remote: Counting objects: 81, done.
+remote: Compressing objects: 100% (29/29), done.
+remote: Total 81 (delta 42), reused 81 (delta 42), pack-reused 0
+Unpacking objects: 100% (81/81), done.
+From github.com:liuyanjie/knowledge
+   2f977e2..be00fff  feature/x -> origin/feature/x
+Your configuration specifies to merge with the ref 'refs/heads/feature/abc'
+from the remote, but no such ref was fetched.
+```
+
 需要提及的一点是：
 
 `pull` 操作，不应该涉及 `合并` 或 `变基` 操作，即 `pull` 应该总是 快速前进 的。
+
+再看对应关系：
+
+  head@local                     |  remote@local                             | remote@remote
+---------------------------------|-------------------------------------------|---------------------------------
+`master`                         | `origin/master`                           | `master`
+`feature/travis-ci`              | `origin/feature/travis-ci`                | `feature/travis-ci`
+`refs/heads/feature/travis-ci`   | `refs/remotes/origin/feature/travis-ci`   | `refs/heads/feature/travis-ci`
+
+`git pull` 在 `git fetch` 的基础之上增加了 `git merge`，将 `远程分支对应的本地分支` 合并到 `追踪的本地开发分支`
 
 
 ### [git push](https://git-scm.com/docs/git-push)
 
 > 使用本地引用更新远程引用，同时发送完成给定引用所必需的对象。
 
-`git push` 是与 `git fetch` 相对应的推送操作，同样需要能够推送本地的多种情形的变更到远程仓库。git 向远程仓库推送的操作只有 `push`。
+`git push` 是与 `git pull` 相对应的推送操作，同样需要能够推送本地的多种情形的变更到远程仓库。git 向远程仓库推送的操作只有 `push`。
 
 ```sh
 git push
@@ -898,7 +965,19 @@ To github.com:liuyanjie/knowledge.git
    d26f671..e081fb3  master -> master
 ```
 
-### submodule
+```sh
+git push --delete ref...
+```
+
+推送代码到服务器与拉取代码到本地其实是相同的，所以服务代码推送到服务全之后，同样有可能出现需要合并的情况，如推送者本地仓库在没有 `pull` 后进行 `commit` 后 `push`，导致本地代码和远程服务器代码分叉，此时服务端也要面临合并问题，合并就有可能产生冲突，但是服务端没有解决冲突的能力，所以实质上服务端是禁止发生合并的，只能进行快速前进。当不能快速合并，服务端会返回错误给客户端，错误会提示先 `pull` 再 `push`。此时，`pull` 操作是一定会进行 `merge` 的，可能需要处理 `merge`，此时就需要处理前面提到的处理本地合并的问题了。
+
+
+
+### [git submodule](https://git-scm.com/docs/git-submodule)
+
+> 初始化、更新或检查子模块
+
+[gitsubmodules](https://git-scm.com/docs/gitsubmodules)  - mounting one repository inside another
 
 ```sh
 git submodule [--quiet] add [-b <branch>] [-f|--force] [--name <name>]
@@ -916,6 +995,47 @@ git submodule [--quiet] foreach [--recursive] <command>
 git submodule [--quiet] sync [--recursive] [--] [<path>…​]
 ```
 
+添加
+
+```sh
+git submodule add -b master --name knowledge --reference=/Volumes/Data/Data/ws/knowledge -- git@github.com:liuyanjie/knowledge.git ./third_parts/knowledge
+```
+
+```sh
+$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+	new file:   .gitmodules
+	new file:   third_parts
+```
+
+```sh
+$ git commit -m "..."
+[master 83506db] ...
+ 2 files changed, 5 insertions(+)
+ create mode 100644 .gitmodules
+ create mode 160000 third_parts
+```
+
+```sh
+$ git push
+Enumerating objects: 7, done.
+Counting objects: 100% (7/7), done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 5.31 KiB | 5.31 MiB/s, done.
+Total 6 (delta 1), reused 0 (delta 0)
+remote: Resolving deltas: 100% (1/1), done.
+To github.com:liuyanjie/about.git
+   53abb09..83506db  master -> master
+```
+
+
 ## 分支管理
 
 Git 是一个分布式的结构，有本地版本库和远程版本库，便有了本地分支和远程分支的区别了。
@@ -924,185 +1044,188 @@ Git 是一个分布式的结构，有本地版本库和远程版本库，便有�
 
 ### [git-branch](https://git-scm.com/docs/git-branch)
 
-> 创建、删除、查看分支
+> 创建、修改、删除、查看、重命名、复制分支
 
 ```sh
-git branch
-  [-q | --quiet]
-  [-a | --all]
-  [-r | --remotes]
-  [-v | -vv | --verbose]
-  [-t | --track | --no-track]
-  [--color[=<when>] |--no-color]
-  [--abbrev=<length> | --no-abbrev]
-  [--column[=<options>] | --no-column]
-  [--sort=<key>]
-  [--points-at <object>]
-  [--format=<format>]
-  [--contains [<commit]]
-  [--no-contains [<commit>]]
-  [--merged [<commit>]]
-  [--no-merged [<commit>]]
-  [--list] [<pattern>…​]
+# 创建分支
+git branch (-t | --[no-]track) (-l | --[no-]create-reflog) [-f | --force] <branch-name> [<start-point>]
 
-git branch [--track | --no-track] [-l] [-f] <branchname> [<start-point>]
+# 设置/修改上游分支
+git branch [-u | --set-upstream-to=] <upstream> [<branch-name>]
 
-git branch [-u | --set-upstream-to=] <upstream> [<branchname>]
-git branch --unset-upstream [<branchname>]
+# 查看分支
+git branch -a --all
+git branch -r
+git branch --list <pattern>...
+git branch --list --[no-]contains [<commit>]
+git branch --list --[no-]merged
 
+# 重置分支
+git branch (-f --force) <branch-name> <start-point>
+
+# 重命名分支
 git branch (-m --move | -M) [<old-branch>] <new-branch>
-git branch (-c --copy | -C) [<old-branch>] <new-branch>
+git branch (-m --move) --force [<old-branch>] <new-branch>
+git branch -M [<old-branch>] <new-branch>
+
+# 复制分支
+git branch (-c --copy) [<old-branch>] <new-branch>
+git branch (-c --copy) --force [<old-branch>] <new-branch>
+git branch -C [<old-branch>] <new-branch>
 
 # 删除分支
-git branch (-d --delete | -D) [-r] <branchname>…​
+# -r 可以同时删除远程追踪分支，但是只有在远程分支删除的情况下才有意义，否则会fetch回来
+git branch (-d --delete) [-r] <branchname>…​
+git branch (-d --delete)  --force [-r] <branchname>…​
+git branch -D [-r] <branchname>…​
 
+# 编辑分支描述
 git branch --edit-description [<branchname>]
 ```
 
-git branch -f --force <branchname> <start-point>
+`git branch` 只能操作本地仓库，无法直接操作远程仓库，操作远程仓库必须通过 `git push`。
 
+`remotes/origin/*` 下的分支删除：
+
+```sh
+git push --delete <branch-name>
+git push :<branch-name>
+```
+
+以上命令在删除远程仓库的分支的同时，同步删除 `remotes/origin/*` 下的分支
+
+```sh
+git branch -d <remote-name>/<branch-name>
+```
+
+以上命令删除 `remotes/origin/*` 下的分支，但是远程分支并未删除，在 `git fetch` 后还会拉下来，所以这种删除无意义。
+
+分支类型：
+
+* 远程分支（remote-branch），远程服务器上的分支，`refs/heads/*`@remote，是`远程追踪分支`的`上游分支`。
+* 远程追踪分支（remote-tracking branch），远程服务器对应在本地的分支，与`远程分支`存在`追踪`关系，可能是`本地分支`的`上游分支`。
+* 本地分支（local branch），`refs/heads/*`@local，可能与`远程追踪分支`存在`追踪`关系。
 
 分支关系：
 
-* 上游分支，upstream，即指父分支。
-* 追踪分支，本地分支和远程分支绑定，在 `pull/push` 时可以自动关联分支。
+* 追踪分支（tracking branch），能够主动追踪其他分支，自动跟随其他分支变化更新的分支。
+* 上游分支（upstream branch），被追踪的分支。
 
-在 Git 进行本地和远程交互时，Git 需要知道本地分支和对应的远程分支，但是通常不需要指定，因为 Git 自动推断出对应关系并进行分支追踪，这也是为什么书写命令时可以省略很多参数。
+> Checking out a `local branch` from a `remote-tracking branch` automatically creates what is called a `“tracking branch”` (and the branch it tracks is called an `“upstream branch”`).
 
-如果你从这里克隆，Git 的 clone 命令会为你自动将其命名为 origin，拉取它的所有数据，创建一个指向它的 master 分支的指针，并且在本地将其命名为 origin/master。
-Git 也会给你一个与 origin 的 master 分支在指向同一个地方的本地 master 分支，这样你就有工作的基础。
+只有把概念定义清楚，才能够进行准确的描述，要不然都可能带来理解上的偏差。
 
+### [git-tag](https://git-scm.com/docs/git-tag)
 
-* 追踪分支
-
-```sh
-# git branch --track local_branch_name remote_branch_name
-git branch --track develop origin/develop
-```
-
-远程跟踪分支是远程分支状态的引用。它们是你不能移动的本地引用，当你做任何网络通信操作时，它们会自动移动。远程跟踪分支像是你上次连接到远程仓库时，那些分支所处状态的书签。
-
-它们以 (remote)/(branch) 形式命名。
-
-从一个远程跟踪分支检出一个本地分支会自动创建一个叫做 “跟踪分支”（有时候也叫做 “上游分支”）。 跟踪分支是与远程分支有直接关系的本地分支。 如果在一个跟踪分支上输入 git pull，Git 能自动地识别去哪个服务器上抓取、合并到哪个分支。
-
-当克隆一个仓库时，它通常会自动地创建一个跟踪 origin/master 的 master 分支。
-
-上游快捷方式:当设置好跟踪分支后，可以通过 @{upstream} 或 @{u} 快捷方式来引用它。 所以在 master 分支时并且它正在跟踪 origin/master 时，如果愿意的话可以使用 git merge @{u} 来取代 git merge origin/master。
-
-* 查看分支
+> 创建、删除、查看、校验标签
 
 ```sh
-git branch                  # 显示本地分支
-git branch -a               # 显示所有分支
-git branch -r               # 显示所有原创分支
-git branch --contains 50089 # 显示包含提交50089的分支
-git branch --merged         # 显示所有已合并到当前分支的分支
-git branch --no-merged      # 显示所有未合并到当前分支的分支
-git branch -vv              # 将所有的本地分支列出来并且包含更多的信息
-```
-
-* 创建分支
-
-```sh
-git branch develop
-```
-
-* 合并分支
-
-```sh
-git merge origin/master                 # 合并远程master分支至当前分支
+git tag [-a | -s | -u <keyid>] [-f] [-m <msg> | -F <file>] [-e] <tagname> [<commit> | <object>]
+git tag -d <tagname>…​
+git tag [-n[<num>]] -l [--contains <commit>] [--no-contains <commit>]
+  [--points-at <object>] [--column[=<options>] | --no-column]
+  [--create-reflog] [--sort=<key>] [--format=<format>]
+  [--[no-]merged [<commit>]] [<pattern>…​]
+git tag -v [--format=<format>] <tagname>…​
 ```
 
 ```sh
-git rebase
+# 查看分支
+git tag
+git tag -l --list "v*"
+
+# 创建分支
+git tag -a v1.0.0 -m "tagging version 1.0.0"
+git tag -a --force v1.0.0 -m "tagging version 1.0.0"
+git tag -a v1.0.0 --file=<file>
+git tag -a v1.0.0 <commit-id>
+
+# 删除分支
+git tag -d v1.0.0
 ```
 
-* 删除分支
-
-删除一个分支的前提是：该分支完全合并到其上游分支，或者无上游分支。
+与分支不同，`git push` 默认不推送标签到远程，所以需要主动推送标签：
 
 ```sh
-git branch -d hotfix/BJVEP933     # 删除分支（本分支修改已合并到其他分支）
-git branch -D hotfix/BJVEP933     # 强制删除分支 git branch --delete --force hotfix/BJVEP933
-git branch -d -r branch           # 删除远程 branch 分支
+git push --tags
 ```
 
-* 删除远程分支
+同样，`git tag` 只能操作本地仓库，无法直接操作远程仓库，操作远程仓库必须通过 `git push`，通常也不会直接操作远程仓库。
 
 ```sh
-git push origin --delete develop
+git push --delete <tag-name>
+git push --delete v1.0.0
 ```
 
-* 重命名分支
+清理 远程不能存在本地存在 的标签：
 
 ```sh
-git branch -m master master_copy        # 本地分支改名
-git branch -M old new                   # 重命名分支，使用-M强制重命名
+git tag -l | xargs git tag -d ; git fetch --tags
 ```
 
-* 分支追踪
+标签并不像分支那样，存在远程标签/本地标签等区分，所以也不存在本地标签与远程标签之间的对应关系，自然也就不需要维护对应关系。
 
-git clone时只在本地创建与远程同名的默认分支，并建立追踪关系
-
-工作区新建的分支需要与远程分支建立关系时：
-
-```sh
-git branch --set-upstream [branch] [origin]/[branch] # 将本地分支与远程某分支建立追踪关系（并没有要求名字必须相同）
-```
-
-```sh
-git branch --track [origin]/[branch] # 将自己当前工作分支与某远程分支建立联系
-git branch --set-upstream-to [origin]/[branch]
-```
-
-```sh
-git push -u [origin] [branch]:[branch] # 追踪对应关系，再把本地更新推上去 省略[branchName]则代表是当前工作分支 -u 参数是 upstream 的意思
-```
-
-```sh
-git pull -u [origin] [branch]:[branch] # 只负责拉下某个远程分支的更新到本地某分支，但是 无法建立追踪关系
-```
-
-```sh
-git push、git pull、git push --all # 这些缺省指定分支和参数的命令最好在已经指定了追踪关系后使用 
-```
-
-查看追踪分支
-
-```sh
-git branch -vv
-cat .git/config
-git config --list
-```
-
-情景1：本地有分支，把分支更新推送到远程版本库（远程版本库还没有对应的分支）
-
-情景2：远程有分支，本地还没有创建对应的分支
-
-情景3：本地和远程都没分支 ===> 划归到情景 1 或 2
-
-情景4：本地和远程有相同数量的分支 ===> 建立分支追踪即可
 
 ### [git-checkout](https://git-scm.com/docs/git-checkout)
 
-* 检出/切换/创建分支
+* 切换分支并检出内容到工作区，也可创建分支
+
+检出已存在的分支
 
 ```sh
-git checkout -b `master_copy`            # 从当前分支创建新分支 `master_copy` 并检出
-git checkout -b master master_copy       # 从当前分支创建新分支 `master_copy` 并检出
-git checkout -b develop origin/develop   # 从远程分支 develop 创建新本地分支 develop 并检出，但是不建立对应的追踪关系
-git checkout features/performance        # 检出已存在的 features/performance 分支
-git checkout --track hotfix/BJVEP933     # 检出远程分支 hotfix/BJVEP933 并创建本地跟踪分支
-git checkout -- README                   # 检出 head 版本的 README 文件（可用于修改错误回退）
-git checkout v2.0                        # 检出版本v2.0
+git checkout    <branch>
+git checkout -b <branch> --track <remote>/<branch>
 ```
 
+创建并检出分支
+
 ```sh
-git checkout --orphan gh-pages
+git checkout -b|-B <new_branch> [<start-point>]
 ```
+
+检出`tree-ish`
+
+```sh
+git checkout [<tree-ish>] [--] <pathspec>…​
+```
+
+检出内容到本地的时候会发生什么？
+
+1. 本地是干净的，无任何修改
+2. 本地存在新增加的文件
+3. 本地存在修改后未提交的文件
+
+Ref：[DETACHED HEAD](https://git-scm.com/docs/git-checkout#_detached_head)
+
+HEAD 通常指向某一个分支，这一分支即是当前工作的分支。当 HEAD 不再指向分支的时候，仓库即处于 `DETACHED HEAD` 状态。
+
+```sh
+$ git checkout ccdd28a
+Note: checking out 'ccdd28a'.
+
+You are in 'detached HEAD' state. You can look around, make experimental
+changes and commit them, and you can discard any commits you make in this
+state without impacting any branches by performing another checkout.
+
+If you want to create a new branch to retain commits you create, you may
+do so (now or later) by using -b with the checkout command again. Example:
+
+  git checkout -b <new-branch-name>
+
+HEAD is now at ccdd28a git update
+
+$ git status
+HEAD detached at ccdd28a
+nothing to commit, working tree clean
+```
+
+处于这种状态下的仓库，如果进行修改并且提交，就会很危险，因为没有任何分支指向新的提交，当 `HEAD` 切换到其他位置的时候，当前的修改就不容易找不到了。
+
+如果需要基于此节点进行修改，需要先基于此节点创建分支。
 
 ### [git-merge](https://git-scm.com/docs/git-merge)
+
+> 将两个或多个分支历史合并在一起
 
 ```sh
 git merge
@@ -1129,94 +1252,146 @@ git merge
 https://stackoverflow.com/questions/11646107/you-have-not-concluded-your-merge-merge-head-exists
 
 # git merge --abort is equivalent to git reset --merge when MERGE_HEAD is present.
+# 中断 merge，当发生冲突时，可以通过中断合并回到合并前的状态
 git merge --abort
 
+# 继续 merge，当发生冲突时，需要解决冲突，解决冲突后，继续执行合并
 git merge --continue
 ```
 
+有如下版本库：
 
-## 文件管理
+```txt
+      A---B---C topic
+     /
+D---E---F---G master
+```
 
-* reset
+```sh
+git merge topic
+```
+
+合并后
+
+```txt
+      A---B---C topic
+     /         \
+D---E---F---G---H master
+```
+
+squash mode
+
+```sh
+git merge --squash topic
+git commit -m "message"
+```
+
+```txt
+      A---B---C topic
+     /
+D---E---F---G---(ABC) master
+```
+
+`--squash` 效果相当于将 topic 分支上的多个 commit A-B-C 合并成一个 ABC，放在当前分支上，原来的 commit 历史则没有拿过来。
+
+判断是否使用 `--squash` 选项最根本的标准是，待合并分支上的历史是否有意义。版本历史记录的应该是代码的发展，而不是开发者在编码时的活动。
+
+只有在开发分支上每个 commit 都有其独自存在的意义，并且能够编译通过的情况下，才应该选择缺省的合并方式来保留 commit 历史。
+
+fast forward mode
+
+```txt
+              A---B---C topic
+             /
+D---E---F---G master
+```
+
+```sh
+git merge --ff topic
+```
+
+```txt
+              A---B---C topic master
+             /
+D---E---F---G
+```
+
+合并的前提是：准备合并的两个 `commit` 不在一条直线上，在一条直线上可以进行快速前进，也可以使用 `--no-ff` 强制合并（无意义）。
+
+合并的过程中需要处理可能得冲突，未冲突的文件将会进行自动合并，在新版本的`tree`中产生一个新版本的`blob`，所以Git能够完整检出不需要依赖历史中的`commit`，只需要当前的`commit`。
+
+合并的结果是：产生一个新的 `commit`，实际上，`squash mode` `fast forward mode` 并不是真正意义上的合并。
+
+
+冲突：
+
+冲突有两种类型，一种是树冲突，修改/删除同一文件，另一种是文件冲突，修改了同一文件中的相同内容。
+
+冲突是如何判断的？
+
+```txt
+      A---B---C topic
+     /
+D---E---F---G master
+```
+
+假如有文件 `README.md` 在 `E`，且 `topic` 和 `master` 都有修改此文件，合并 `topic` 到 `master` 时，冲突检查的依据不是对比 `README.md@topic` 和 `README.md@master` 是否相同，而是对比 `README.md@topic` 和 `README.md@master` 相对于 `E` 的变化。即使是 `README.md` 文件在被修改后的内容是相同的，也会产生冲突。而冲突产生的文件，就是将 相对于 `E`，都合并到同一个文件中，并交由用户解决。
+
+```txt
+<<<<<<< yours:sample.txt
+Git makes conflict resolution easy.
+=======
+Git makes conflict resolution easy.
+>>>>>>> theirs:sample.txt
+```
+
+最佳实践：
+
+1. 尽量避免在本地使用 `merge`，也尽量避免在本地发生 `Merge`。
+2. `merge` 时，本地不要有未提交的更改，这些修改可能会在中断合并时丢失。
+
+## 基本操作
 
 ### git add
 
 > 添加文件到索引中，为下一次提交准备内容。
 
-此命令使用在工作树中找到的最新内容更新索引，以准备为下次提交暂存的内容。
+将工作区的修改添加到暂存区中，此命令使用在工作树中找到的最新内容更新索引，以准备为下次提交暂存内容。
 
-```sh
-git add
-    [--verbose | -v]
-    [--dry-run | -n]
-    [--force | -f]
-    [--interactive | -i]
-    [--patch | -p]
-    [--edit | -e]
-    [--[no-]all | --[no-]ignore-removal | [--update | -u]]
-    [--intent-to-add | -N]
-    [--refresh]
-    [--ignore-errors]
-    [--ignore-missing]
-    [--chmod=(+|-)x]
-    [--]
-    [<pathspec>…​]
-```
+典型的情况下，将整个文件添加到暂存区中，通过特定的选项，也可以将工作区修改的部分内容加到暂存区中。
 
-```sh
-git add Documentation/\*.txt       # 添加文件
-git add node_modules/bluebird  -f  # 强制添加文件，跳过忽略列表
-```
+暂存区保存工作树内容的快照，并将此快照作为下一次提交的内容。因此，在对工作树进行任何更改之后，在运行commit命令之前，必须使用add命令将任何新的或修改的文件添加到索引中。
 
-### git commit
-
-[Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
-
-```sh
-git commit
-     [-a | --interactive | --patch]
-     [-s]
-     [-v]
-     [-u<mode>]
-     [--amend]
-     [--dry-run]
-     [(-c | -C | --fixup | --squash) <commit>]
-     [-F <file> | -m <msg>]
-     [--reset-author]
-     [--allow-empty]
-     [--allow-empty-message]
-     [--no-verify]
-     [-e]
-     [--author=<author>]
-     [--date=<date>]
-     [--cleanup=<mode>]
-     [--[no-]status]
-     [-i | -o] [-S[<key-id>]]
-     [--]
-     [<file>…​]
-```
-
-```sh
-git commit                          # 提交的是暂存区里面的内容，也就是 Changes to be committed 中的文件。
-git commit -a                       # 除了将暂存区里的文件提交外，还提交 Changes bu not updated 中的文件。
-git commit -a -m 'commit info'      # 注释，如果没有 -m，会默认会使用vi编辑注释。
-git commit -am "This is a commit"   # 同上，合并提交，将 add 和 commit 合为一步
-git commit --amend                  # 对上一次提交进行修改，合并上一次提交（用于反复修改）
-git commit --amend -a               # 提交时忘记使用 -a 选项，导致 Changes bu not updated 中的内容没有被提交
-```
+默认情况下，`git add` 不会添加忽略的文件，`git add -f` 会进行强制添加。
 
 ### git rm
+
+> 从工作区和暂存区移除文件
 
 ```sh
 git rm [-f | --force] [-n] [-r] [--cached] [--ignore-unmatch] [--quiet] [--] <file>…​
 ```
 
 ```sh
-git rm Documentation/\*.txt
-git rm -f git-*.sh
+git rm *.txt
+```
+
+等价于：
+
+```sh
+rm *.txt
+git add *.txt
+```
+
+仅从暂存区删除内容
+
+```sh
+git rm --cached *.txt
 ```
 
 ### git mv
+
+> 重命名或移动文件，同步更新暂存区
 
 ```sh
 git mv <options>…​ <args>…​
@@ -1232,19 +1407,9 @@ git mv -v old_name new_name         # 报告被移动文件
 git mv --dry-run old_name new_name  # 只显示将会发生什么
 ```
 
-### git status
-
-```sh
-git status [<options>…​] [--] [<pathspec>…​]
-```
-
-```sh
-git status     # 显示状态
-git status -s  # 显示简短信息
-git status -b  # 显示分支状态
-```
-
 ### git diff
+
+> Show changes between commits, commit and working tree, etc
 
 ```sh
 git diff [options] [<commit>] [--] [<path>…​]
@@ -1253,8 +1418,6 @@ git diff [options] <commit> <commit> [--] [<path>…​]
 git diff [options] <blob> <blob>
 git diff [options] [--no-index] [--] <path> <path>
 ```
-
-[Diff_utility](https://en.wikipedia.org/wiki/Diff_utility)
 
 ```sh
 git diff                # 查看尚未暂存的文件更新了哪些部分，不加参数直接输入。
@@ -1270,7 +1433,46 @@ git diff HEAD^ HEAD     # 比较上次提交commit和上上次提交
 git diff SHA1 SHA2      # 比较两个历史版本之间的差异
 ```
 
+[Diff_utility](https://en.wikipedia.org/wiki/Diff_utility)
+
+
+### git commit
+
+> Record changes to the repository
+
+```sh
+git commit                          # 提交的是暂存区里面的内容，也就是 Changes to be committed 中的文件。
+git commit -a                       # 除了将暂存区里的文件提交外，还提交 Changes bu not updated 中的文件。
+git commit -a -m 'commit info'      # 注释，如果没有 -m，会默认会使用vi编辑注释。
+git commit -am "This is a commit"   # 同上，合并提交，将 add 和 commit 合为一步
+git commit --amend                  # 对上一次提交进行修改，合并上一次提交（用于反复修改）
+git commit --amend -a               # 提交时忘记使用 -a 选项，导致 Changes bu not updated 中的内容没有被提交
+git commit --author=<author>        # 设置作者，与提交者分开
+git commit --file=<file>            # 注释从文件中读取
+```
+
+对于 commit 来说，最重要的是，每一次 commit 都应该是一个完整的提交，而且应该有个规范清晰的注释。
+
+[Commit message 和 Change log 编写指南](http://www.ruanyifeng.com/blog/2016/01/commit_message_change_log.html)
+
+
+### git status
+
+> 显示工作树状态
+
+```sh
+git status [<options>…​] [--] [<pathspec>…​]
+```
+
+```sh
+git status     # 显示状态
+git status -s  # 显示简短信息
+git status -b  # 显示分支状态
+```
+
 ### git reset
+
+> 重置工作区
 
 ```sh
 git reset [-q] [<tree-ish>] [--] <paths>…​
@@ -1279,15 +1481,22 @@ git reset [--soft | --mixed [-N] | --hard | --merge | --keep] [-q] [<commit>]
 ```
 
 ```sh
-git reset --mixed id   # (默认) 将 git 的 HEAD 变了(也就是提交记录变了)，但文件并没有改变， 取消了 commit 和 add 的内容
-git reset --soft  id   # 实际上，是 git reset –mixed id 后，又做了一次git add。即取消了commit的内容。
-git reset --hard  id   # 是将 git 的 HEAD 变了，文件也变了
+git reset --mixed id
+git reset --soft  id
+git reset --hard  id
 ```
 
-按改动影响范围排序如下: `soft (commit) < mixed (commit + add) < hard (commit + add + local working)`
+[git-reset](./images/git-reset.svg)
+
+[5.2-代码回滚：Reset、Checkout、Revert-的选择](https://github.com/geeeeeeeeek/git-recipes/wiki/5.2-代码回滚：Reset、Checkout、Revert-的选择)
+
+### git revert
 
 
-### 暂存区
+### git rebase
+
+
+### Stash
 
 ```sh
 git stash                       # 暂存当前修改，将所有至为HEAD状态
@@ -1295,4 +1504,3 @@ git stash list                  # 查看所有暂存
 git stash show -p stash@{0}     # 参考第一次暂存
 git stash apply stash@{0}       # 应用第一次暂存
 ```
-

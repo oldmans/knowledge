@@ -6,7 +6,7 @@
 ## 整理内容
 
 * [GIT对象模型](./git-object-model.md)
-* [Git-Usage](./git-usage.md)
+* [Git工作机制](./git-working-mechanism.md)
 
 ## GIT学习
 

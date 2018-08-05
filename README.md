@@ -88,3 +88,5 @@ DevOps（Development-Operations）是一种重视`“软件开发人员（Dev）
 * [CRC](https://en.wikipedia.org/wiki/Cyclic_redundancy_check)
 * [ITU-T](https://en.wikipedia.org/wiki/ITU-T)
 * [Kerberos](https://zh.wikipedia.org/wiki/Kerberos)
+* [Convention_over_configuration](https://en.wikipedia.org/wiki/Convention_over_configuration)
+* [Separation_of_concerns](https://en.wikipedia.org/wiki/Separation_of_concerns)
