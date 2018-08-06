@@ -782,7 +782,7 @@ D---E ← master
     origin/master in your repository
 ```
 
-以上版本库库满足快速合并的条件，可以进行快速合并 `--ff`：
+以上版本库库满足快速前进的条件，可以进行快速前进 `--ff`：
 
 ```txt
               master on origin
@@ -804,9 +804,9 @@ D---E ← master
     origin/master in your repository
 ```
 
-快速合并不产生新的 `Commit`，效果上只移动分支头即可，默认情况下进行就是快速合并
+快速前进不产生新的 `Commit`，效果上只移动分支头即可，默认情况下进行就是快速前进
 
-在能够进行快速合并的情况下，也可以强制进行合并，如下：
+在能够进行快速前进的情况下，也可以强制进行合并，如下：
 
 ```txt
               master on origin
@@ -969,7 +969,7 @@ To github.com:liuyanjie/knowledge.git
 git push --delete ref...
 ```
 
-推送代码到服务器与拉取代码到本地其实是相同的，所以服务代码推送到服务全之后，同样有可能出现需要合并的情况，如推送者本地仓库在没有 `pull` 后进行 `commit` 后 `push`，导致本地代码和远程服务器代码分叉，此时服务端也要面临合并问题，合并就有可能产生冲突，但是服务端没有解决冲突的能力，所以实质上服务端是禁止发生合并的，只能进行快速前进。当不能快速合并，服务端会返回错误给客户端，错误会提示先 `pull` 再 `push`。此时，`pull` 操作是一定会进行 `merge` 的，可能需要处理 `merge`，此时就需要处理前面提到的处理本地合并的问题了。
+推送代码到服务器与拉取代码到本地其实是相同的，所以服务代码推送到服务全之后，同样有可能出现需要合并的情况，如推送者本地仓库在没有 `pull` 后进行 `commit` 后 `push`，导致本地代码和远程服务器代码分叉，此时服务端也要面临合并问题，合并就有可能产生冲突，但是服务端没有解决冲突的能力，所以实质上服务端是禁止发生合并的，只能进行快速前进。当不能快速前进，服务端会返回错误给客户端，错误会提示先 `pull` 再 `push`。此时，`pull` 操作是一定会进行 `merge` 的，可能需要处理 `merge`，此时就需要处理前面提到的处理本地合并的问题了。
 
 
 
@@ -1472,7 +1472,7 @@ git status -b  # 显示分支状态
 
 ### git reset
 
-> 重置工作区
+> 重置工作区，将当前分支回退到某一节点
 
 ```sh
 git reset [-q] [<tree-ish>] [--] <paths>…​
@@ -1480,27 +1480,172 @@ git reset (--patch | -p) [<tree-ish>] [--] [<paths>…​]
 git reset [--soft | --mixed [-N] | --hard | --merge | --keep] [-q] [<commit>]
 ```
 
-```sh
-git reset --mixed id
-git reset --soft  id
-git reset --hard  id
+`git reset` 会修改当前分支头从某一个 `<commit-id>` 移动到另外的一个指定的 `<commit-id>`
+
+如：
+
+```txt
+              HEAD
+              ↓
+              topic
+              ↓
+      A---B---C
+     /
+D---E---F---G master
 ```
 
-[git-reset](./images/git-reset.svg)
+当前活跃的分支是 `topic`
 
-[5.2-代码回滚：Reset、Checkout、Revert-的选择](https://github.com/geeeeeeeeek/git-recipes/wiki/5.2-代码回滚：Reset、Checkout、Revert-的选择)
+```sh
+git reset A
+```
+
+执行以上操作后：
+
+```txt
+      HEAD
+      ↓
+      topic
+      ↓
+      A---B---C
+     /
+D---E---F---G master
+```
+
+此时，`HEAD -> topic -> A`，B、C 此时处于悬挂状态，如同普通的对象一样，没有任何引用后，会被 Git GC 回收。
+
+执行此操作后，B、C 两点虽然依然存在于仓库中，但是它们已经逻辑上脱离了Git。
+
+此时，B、C 两点提交的内容怎么办？是不是就丢失了呢？
+
+Git 给了我们多种选择：
+
+* --soft，B、C 提交的内容不会回到工作区和暂存区。因为当前工作区内容是基于 C 修改的，所以实际上并无内容丢失。
+* --mixed，B、C 提交的内容回到暂存区，但是工作区内容不变，也就是某些文件处于 `修改未提交状态`。同上，也无内容丢失。
+* --hard，B、C 提交的内容不会回到工作区和暂存区，同时暂存区和工作区回到A点状态，B、C 提交的内容以及工作区后续的修改全部丢失。
+
+如果 `reset` 误操作操作怎么办？
+
+1. 如果存在上游分支，可以通过上游分支恢复
+
+    ```sh
+    git reset master^2
+    git reset origin/master
+    ```
+
+2. 可以通过 `reflog` 恢复
+
+    `reflog` 记录 HEAD 的变化，所以可以通过 `reflog` 找到 `reset` 之前的 `HEAD` 的位置，但是前提是后续节点未被垃圾回收。
+
+    ```sh
+    git reflog
+    58c1d5d (HEAD -> master, origin/master) HEAD@{0}: commit: update git
+    ccdd28a (test2, test1, test) HEAD@{1}: checkout: moving from test to master
+    ccdd28a (test2, test1, test) HEAD@{2}: checkout: moving from master to test
+    ccdd28a (test2, test1, test) HEAD@{3}: commit: git update
+    e081fb3 HEAD@{4}: commit: update python
+    d26f671 HEAD@{5}: commit: update
+    33db13f HEAD@{6}: commit (amend): update and format
+    5c41033 HEAD@{7}: commit: update and format
+    e56ec4e HEAD@{8}: commit: 移除乱码字符
+    6595b95 HEAD@{9}: commit: feat(): add hexo.yaml
+    ```
+
+未提交的内容是很难就行恢复的，所有在进行 `reset` 操作时，要将工作区的内容提交。
+
+reset 除了将工作区回退到某个节点之外，常用的应用就是将后续的多个提交合并为一个提交，因为后续提交的内容可以回到暂存区或工作区中。
+
+在某些Git工作流中，要求将多个提交合并成一个之后才能合并到上游分支。
 
 ### git revert
+
+```sh
+git revert [--[no-]edit] [-n] [-m parent-number] [-s] [-S[<keyid>]] <commit>…​
+git revert --continue
+git revert --quit
+git revert --abort
+```
+
+```sh
+git revert HEAD~3
+git revert -n master~5..master~2
+```
+
+`git revert` 用于撤销一个或多个提交，并建立一个新的提交。`commit` 中所做的修改都会被移除掉，相当于 `commit` 反向操作。
+
+`git revert` 通常用户快速回滚。
+
+
+示例如下：
+
+```sh
+            HEAD
+            ↓
+            master
+            ↓
+A---B---C---D
+```
+
+```sh
+git revert C
+```
+
+```sh
+                HEAD
+                ↓
+                master
+                ↓
+A---B---C---D---C'
+```
+
+`C'` 是一个全新的 `Commit` 与 `C` 是不同的，但是这种情况下，`C'` 与 `C` 中的 `tree` 是相同的。
 
 
 ### git rebase
 
-
-### Stash
+> 变基操作，基指的是起始提交，即参数中常见的 <start-point>
 
 ```sh
-git stash                       # 暂存当前修改，将所有至为HEAD状态
-git stash list                  # 查看所有暂存
-git stash show -p stash@{0}     # 参考第一次暂存
-git stash apply stash@{0}       # 应用第一次暂存
+git rebase [-i | --interactive] [<options>] [--exec <cmd>] [--onto <newbase>] [<upstream> [<branch>]]
+git rebase [-i | --interactive] [<options>] [--exec <cmd>] [--onto <newbase>] --root [<branch>]
+git rebase --continue | --skip | --abort | --quit | --edit-todo | --show-current-patch
+
+# 解决冲突之后继续 rebase
+git rebase --continue
+
+# 跳过
+git rebase --skip
+
+# 中断 rebase
+git rebase --abort
 ```
+
+示例：
+
+```txt
+      A---B---C ← topic
+     /
+D---E---F---G ← master
+```
+
+```sh
+git rebase master
+```
+
+```txt
+              A'--B'--C' ← topic
+             /
+D---E---F---G ← master
+```
+
+以上，通过变基操作，将topic分支的 <start-point> 从 `E` 调整到了 `G`。
+
+变基操作的原理：将 A B C 基于 G 重新提交，提交的过程可能与 F G 存在冲突，需要解决冲突。
+
+变基操作的应用：
+
+1. 保持与上游分支同步，同步上游分支的最新版本
+2. 合并时存在冲突，通过变基操作解决冲突
+
+
+### git cherry-pick
